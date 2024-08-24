@@ -1,0 +1,10 @@
+name: LoginTimedTemporaryPermission
+main: me.avankziar.lttp.spigot.LTTP
+version: 1
+author: Avankziar
+api-version: 1.19
+description: Store temporary permission when the player is offline.
+depend: [InterfaceHub, LuckPerms]
+softdepend: [RootAdministration]
+website: TBA
+prefix: LTTP

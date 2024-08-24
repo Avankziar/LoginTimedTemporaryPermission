@@ -23,10 +23,9 @@ import me.avankziar.lttp.general.database.YamlHandler;
 import me.avankziar.lttp.general.database.YamlManager;
 import me.avankziar.lttp.velocity.database.SQLiteHandler;
 import me.avankziar.lttp.velocity.database.SQLiteSetup;
+import me.avankziar.lttp.velocity.handler.LuckPermsHandler;
 import me.avankziar.lttp.velocity.listener.JoinQuitListener;
 import me.avankziar.lttp.velocity.metric.Metrics;
-import net.luckperms.api.LuckPerms;
-import net.luckperms.api.LuckPermsProvider;
 
 @Plugin(
 	id = "logintimedtemporarypermission",
@@ -69,6 +68,7 @@ public class LTTP
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) 
     {
+    	logger = Logger.getLogger("LTTP");
     	PluginDescription pd = server.getPluginManager().getPlugin(pluginname.toLowerCase()).get().getDescription();
         List<String> dependencies = new ArrayList<>();
         pd.getDependencies().stream().allMatch(x -> dependencies.add(x.getId()));
@@ -162,7 +162,7 @@ public class LTTP
     private void setListeners()
     {
     	EventManager em = server.getEventManager();
-    	em.register(this, new JoinQuitListener());
+    	em.register(this, new JoinQuitListener(plugin));
     }
     
     private void setupPermissionApis()
@@ -170,7 +170,7 @@ public class LTTP
     	Optional<PluginContainer> lp = plugin.getServer().getPluginManager().getPlugin("luckperms");
         if(lp.isPresent()) 
         {
-        	luckpermsHandler = new LuckPermsHandler(plugin, LuckPermsProvider.get());
+        	luckpermsHandler = new LuckPermsHandler(plugin, net.luckperms.api.LuckPermsProvider.get());
         }
         if(luckpermsHandler == null)
         {

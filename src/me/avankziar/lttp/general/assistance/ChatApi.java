@@ -38,6 +38,11 @@ public class ChatApi
 		sender.spigot().sendMessage(tctl(s));
 	}
 	
+	public static void sendMessage(net.md_5.bungee.api.CommandSender sender, String s)
+	{
+		sender.sendMessage(tctl(s));
+	}
+	
 	public static void sendMessage(com.velocitypowered.api.command.CommandSource sender, String s)
 	{
 		sender.sendMessage(tl(s));

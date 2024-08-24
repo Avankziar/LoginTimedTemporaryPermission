@@ -1,0 +1,9 @@
+{"id":"logintimedtemporarypermission",
+"name":"LoginTimedTemporaryPermission",
+"version":"${version}",
+"description":"Store temporary permission when the player is offline.",
+"authors":["Avankziar"],
+"url":"https://example.com",
+"dependencies":[{id='interfacehub', version='null', optional=false}, 
+				{id='luckperms', version='null', optional=false}],
+"main":"me.avankziar.lttp.velocity.LTTP"}

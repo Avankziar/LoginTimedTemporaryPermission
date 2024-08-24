@@ -77,137 +77,8 @@ public class YamlManager
 		return guisKeys;
 	}
 	
-	/*
-	 * The main methode to set all paths in the yamls.
-	 */
-	public void setFileInputBukkit(org.bukkit.configuration.file.YamlConfiguration yml,
-			LinkedHashMap<String, Language> keyMap, String key, ISO639_2B languageType)
-	{
-		if(!keyMap.containsKey(key))
-		{
-			return;
-		}
-		if(key.startsWith("#"))
-		{
-			//Comments
-			String k = key.replace("#", "");
-			if(yml.get(k) == null)
-			{
-				//return because no aktual key are present
-				return;
-			}
-			if(yml.getComments(k) != null && !yml.getComments(k).isEmpty())
-			{
-				//Return, because the comments are already present, and there could be modified. F.e. could be comments from a admin.
-				return;
-			}
-			if(keyMap.get(key).languageValues.get(languageType).length == 1)
-			{
-				if(keyMap.get(key).languageValues.get(languageType)[0] instanceof String)
-				{
-					String s = ((String) keyMap.get(key).languageValues.get(languageType)[0]).replace("\r\n", "");
-					yml.setComments(k, Arrays.asList(s));
-				}
-			} else
-			{
-				List<Object> list = Arrays.asList(keyMap.get(key).languageValues.get(languageType));
-				ArrayList<String> stringList = new ArrayList<>();
-				if(list instanceof List<?>)
-				{
-					for(Object o : list)
-					{
-						if(o instanceof String)
-						{
-							stringList.add(((String) o).replace("\r\n", ""));
-						}
-					}
-				}
-				yml.setComments(k, (List<String>) stringList);
-			}
-			return;
-		}
-		if(yml.get(key) != null)
-		{
-			return;
-		}
-		if(keyMap.get(key).languageValues.get(languageType).length == 1)
-		{
-			if(keyMap.get(key).languageValues.get(languageType)[0] instanceof String)
-			{
-				yml.set(key, ((String) keyMap.get(key).languageValues.get(languageType)[0]).replace("\r\n", ""));
-			} else
-			{
-				yml.set(key, keyMap.get(key).languageValues.get(languageType)[0]);
-			}
-		} else
-		{
-			List<Object> list = Arrays.asList(keyMap.get(key).languageValues.get(languageType));
-			ArrayList<String> stringList = new ArrayList<>();
-			if(list instanceof List<?>)
-			{
-				for(Object o : list)
-				{
-					if(o instanceof String)
-					{
-						stringList.add(((String) o).replace("\r\n", ""));
-					} else
-					{
-						stringList.add(o.toString().replace("\r\n", ""));
-					}
-				}
-			}
-			yml.set(key, (List<String>) stringList);
-		}
-	}
-	
-	public void setFileInputBungee(net.md_5.bungee.config.Configuration yml,
-			LinkedHashMap<String, Language> keyMap, String key, ISO639_2B languageType)
-	{
-		if(!keyMap.containsKey(key))
-		{
-			return;
-		}
-		if(key.startsWith("#"))
-		{
-			//Comments cannot funktion on bungee
-			return;
-		}
-		if(yml.get(key) != null)
-		{
-			return;
-		}
-		if(keyMap.get(key).languageValues.get(languageType).length == 1)
-		{
-			if(keyMap.get(key).languageValues.get(languageType)[0] instanceof String)
-			{
-				yml.set(key, ((String) keyMap.get(key).languageValues.get(languageType)[0]).replace("\r\n", ""));
-			} else
-			{
-				yml.set(key, keyMap.get(key).languageValues.get(languageType)[0]);
-			}
-		} else
-		{
-			List<Object> list = Arrays.asList(keyMap.get(key).languageValues.get(languageType));
-			ArrayList<String> stringList = new ArrayList<>();
-			if(list instanceof List<?>)
-			{
-				for(Object o : list)
-				{
-					if(o instanceof String)
-					{
-						stringList.add(((String) o).replace("\r\n", ""));
-					} else
-					{
-						stringList.add(o.toString().replace("\r\n", ""));
-					}
-				}
-			}
-			yml.set(key, (List<String>) stringList);
-		}
-	}
-	
 	public void setFileInput(dev.dejvokep.boostedyaml.YamlDocument yml,
-			LinkedHashMap<String, Language> keyMap, String key, ISO639_2B languageType) throws org.spongepowered.configurate.serialize.SerializationException
+			LinkedHashMap<String, Language> keyMap, String key, ISO639_2B languageType)
 	{
 		if(!keyMap.containsKey(key))
 		{
@@ -219,6 +90,10 @@ public class YamlManager
 		}
 		if(key.startsWith("#"))
 		{
+			if(type == Type.BUNGEE)
+			{
+				return;
+			}
 			//Comments
 			String k = key.replace("#", "");
 			if(yml.get(k) == null)
@@ -486,7 +361,7 @@ public class YamlManager
 				"",
 				"Wenn 'true', wird dem Spieler beim joinen eine Sync Nachricht gesendet.",
 				"",
-				""});
+				"If 'true', a sync message will be sent to the player when joining."});
 		addConfig("ExcludedPermissionPerGroup",
 				new Object[] {
 				"vip;dummy.one",
@@ -501,66 +376,17 @@ public class YamlManager
 				"Bedenkt, dass nur Spielerbezogene temporäre Permission gespeichert werden können.",
 				"Temporäre Permission, welcher Gruppen vergeben werden, werden nicht geträckt, da sie für mehrere Spieler sind.",
 				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-				""});
+				"This is where all permissions that should be excluded from tracking go.",
+				"These permissions will therefore be ignored when the player joins.",
+				"The specified group is meant as a variable for the player's primary group.",
+				"This means that if the player has this group as their primary, then only this one counts.",
+				"A <default> is for all players, regardless of which group the player is in.",
+				"Please note that only player-related temporary permissions can be saved.",
+				"Temporary permissions granted to groups are not tracked because they are for multiple players."});
 	}
 	
 	public void initLanguage() //INFO:Languages
-	{
-		languageKeys.put("InputIsWrong",
-				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"&cDeine Eingabe ist fehlerhaft! Klicke hier auf den Text, um weitere Infos zu bekommen!",
-						"&cYour input is incorrect! Click here on the text to get more information!"}));
-		languageKeys.put("NoPermission",
-				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"&cDu hast dafür keine Rechte!",
-						"&cYou dont not have the rights!"}));
-		languageKeys.put("NoPlayerExist",
-				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"&cDer Spieler existiert nicht!",
-						"&cThe player does not exist!"}));
-		languageKeys.put("NoNumber",
-				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"&cDas Argument &f%value% &cmuss eine ganze Zahl sein.",
-						"&cThe argument &f%value% &must be an integer."}));
-		languageKeys.put("NoDouble",
-				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"&cDas Argument &f%value% &cmuss eine Gleitpunktzahl sein!",
-						"&cThe argument &f%value% &must be a floating point number!"}));
-		languageKeys.put("IsNegativ",
-				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"&cDas Argument &f%value% &cmuss eine positive Zahl sein!",
-						"&cThe argument &f%value% &must be a positive number!"}));
-		languageKeys.put("GeneralHover",
-				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"&eKlick mich!",
-						"&eClick me!"}));
-		languageKeys.put("Headline", 
-				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"&e=====&7[&6BungeeTeleportManager&7]&e=====",
-						"&e=====&7[&6BungeeTeleportManager&7]&e====="}));
-		languageKeys.put("Next", 
-				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"&e&nnächste Seite &e==>",
-						"&e&nnext page &e==>"}));
-		languageKeys.put("Past", 
-				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"&e<== &nvorherige Seite",
-						"&e<== &nprevious page"}));
-		languageKeys.put("IsTrue", 
-				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"&a✔",
-						"&a✔"}));
-		languageKeys.put("IsFalse", 
-				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"&c✖",
-						"&c✖"}));
-		
+	{		
 		languageKeys.put("SyncMessage", 
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
 						"<gray>[<red>LTTP<gray>] <white>%amount% Permission Synchronisiert!",

@@ -1,4 +1,4 @@
-package me.avankziar.lttp.velocity;
+package me.avankziar.lttp.velocity.handler;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -13,6 +13,7 @@ import com.velocitypowered.api.proxy.Player;
 import me.avankziar.lttp.general.assistance.ChatApi;
 import me.avankziar.lttp.general.database.SQLiteType;
 import me.avankziar.lttp.general.object.PlayerTemporaryPermission;
+import me.avankziar.lttp.velocity.LTTP;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.model.user.User;
 import net.luckperms.api.node.NodeType;
@@ -74,6 +75,15 @@ public class LuckPermsHandler
 		inSync.remove(uuid);
 	}
 	
+	public boolean isExcluded(String primary, String perm)
+	{
+		if(excludedPermissionPerGroup.containsKey(primary))
+		{
+			return excludedPermissionDefault.contains(perm) || excludedPermissionPerGroup.get(primary).contains(perm);
+		}
+		return excludedPermissionDefault.contains(perm);
+	}
+	
 	public void join(final Player player, final UUID uuid)
 	{
 		LTTP.getPlugin().getServer().getScheduler().buildTask(LTTP.getPlugin(), (task) ->
@@ -86,6 +96,11 @@ public class LuckPermsHandler
 			final ArrayList<PlayerTemporaryPermission> ptps = PlayerTemporaryPermission.convert(
 					LTTP.getPlugin().getSQLLiteHandler().getFullList(
 							SQLiteType.PLAYER_TEMP_PERM, "`id` ASC", "`player_uuid` = ?", uuid.toString()));
+			if(ptps.isEmpty())
+			{
+				task.cancel();
+				return;
+			}
 			User user = lp.getUserManager().getUser(uuid);
 			for(PlayerTemporaryPermission ptp : ptps)
 			{
@@ -105,7 +120,7 @@ public class LuckPermsHandler
 				ChatApi.sendMessage(player, LTTP.getPlugin().getYamlHandler().getLang().getString("SyncMessage")
 						.replace("%amount%", String.valueOf(ptps.size())));
 			}
-		}).delay(10L, TimeUnit.MILLISECONDS).repeat(15L, TimeUnit.MILLISECONDS).schedule();
+		}).repeat(500L, TimeUnit.MILLISECONDS).schedule();
 	}
 	
 	public void quit(final UUID uuid)
@@ -118,13 +133,18 @@ public class LuckPermsHandler
 			}
 			addInSync(uuid);
 			User user = lp.getUserManager().getUser(uuid);
+			String primary = user.getPrimaryGroup();
 			final List<PermissionNode> list = user.getNodes(NodeType.PERMISSION).stream()
 					.filter(x -> x.hasExpiry())
 				    .collect(Collectors.toList());
 			for(PermissionNode pn : list)
 			{
-				long dur = pn.getExpiryDuration().toMillis();
 				String perm = pn.getPermission();
+				if(isExcluded(primary, perm))
+				{
+					continue;
+				}
+				long dur = pn.getExpiryDuration().toMillis();
 				boolean value = pn.getValue();
 				PlayerTemporaryPermission ptp = new PlayerTemporaryPermission(0, uuid, perm, dur, value);
 				LTTP.getPlugin().getSQLLiteHandler().create(SQLiteType.PLAYER_TEMP_PERM, ptp);
@@ -133,6 +153,6 @@ public class LuckPermsHandler
 			CompletableFuture.runAsync(() -> lp.getUserManager().saveUser(user));
 			task.cancel();
 			removeInSync(uuid);
-		}).delay(10L, TimeUnit.MILLISECONDS).repeat(15L, TimeUnit.MILLISECONDS).schedule();
+		}).repeat(500L, TimeUnit.MILLISECONDS).schedule();
 	}
 }
