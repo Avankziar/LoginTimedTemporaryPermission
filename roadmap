@@ -1,0 +1,5 @@
+LTTP, Login Timed Temporary Permission, ist ein Plugin, welches Temporäre Permission, 
+welche direkt auf dem Spieler sind, jedes mal in eine Datenbank zwischen zu speichern,
+wenn der Spieler offline geht. Und sie jedes mal setzt, wenn der Spieler joint.
+Dies sorgt für eine "akkuratere" Bemessung von temporären Permission. Bzw. Spieler
+haben tatsächlich mehr Spielzeit mit dieser Art der temporären Permission.
