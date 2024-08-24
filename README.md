@@ -26,6 +26,6 @@ LTTP has no commands, and permission BUT it has a config.<br>
 There you can put excluded Permission, which you dont want the plugin to store.<br>
 (The idea there is, that you as admin, can seperate between permission which are bound to the players actual playtime or (the excluded ones) on the normale time, offline or online)
 
-For example: "vip:here.your.permission"<br>
+For example: "vip;here.your.permission"<br>
 The term "vip" is the primary group. Meaning if the player has this group as primary group, it will it ignore it. If you which, that a permission is excluded for all players, use the term "default".<br>
 The term "here.your.permission" is the permission which will be ignored.
