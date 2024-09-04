@@ -2,3 +2,4 @@ name: LoginTimedTemporaryPermission
 main: me.avankziar.lttp.bungee.LTTP
 version: 1
 author: Avankziar
+depends: [InterfaceHub, LuckPerms]

@@ -130,7 +130,7 @@ public class LTTP extends JavaPlugin
 	
 	public void setupBstats()
 	{
-		int pluginId = 0;
+		int pluginId = 23282;
         new Metrics(this, pluginId);
 	}
 }

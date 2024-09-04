@@ -185,7 +185,7 @@ public class LTTP
     
     public void setupBstats()
 	{
-    	int pluginId = 0;
+    	int pluginId = 23284;
         metricsFactory.make(this, pluginId);
 	}
 }
