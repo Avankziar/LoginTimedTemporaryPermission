@@ -9,19 +9,21 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import me.avankziar.lttp.velocity.LTTP;
 
 public class SQLiteBaseSetup
 {
 	@Nullable
 	protected static Logger logger;
 	private String dbTemporaryPermission = "temporaryPermission";
+	private File directory = null;
 	
-	public SQLiteBaseSetup(Logger logger)
+	public SQLiteBaseSetup(Logger logger, @Nonnull File directory)
 	{
 		SQLiteBaseSetup.logger = logger;
+		this.directory = directory;
 	}
 	
 	public boolean loadMysqlSetup(ServerType serverType)
@@ -85,7 +87,7 @@ public class SQLiteBaseSetup
 	
 	private Connection reConnect() throws SQLException
 	{
-		File directory = new File(LTTP.getPlugin().getDataDirectory().getParent().toFile()+"/SQLite/");
+		File directory = new File(this.directory.getPath()+"/SQLite/");
 		if(!directory.exists())
 		{
 			directory.mkdir();
@@ -98,11 +100,19 @@ public class SQLiteBaseSetup
 				db.createNewFile();
 			} catch (IOException e)
 			{
-				LTTP.getPlugin().getLogger().log(Level.WARNING, "Could not build db file!", e);
+				logger.log(Level.WARNING, "Could not build db file!", e);
 				e.printStackTrace();
 			}
 		}
-		boolean bool = false;
+		try
+		{
+			Class.forName("org.sqlite.JDBC");
+		} catch (ClassNotFoundException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		/*boolean bool = false;
 	    try
 	    {
 	    	// Load new Drivers for papermc
@@ -119,7 +129,7 @@ public class SQLiteBaseSetup
     		{
     			Class.forName("com.mysql.jdbc.Driver");
     		}  catch (Exception e) {}
-    	}
+    	}*/
         //Connect to database
         return DriverManager.getConnection("jdbc:sqlite:" + db);
 	}

@@ -10,7 +10,16 @@ public enum SQLiteType
 			+ " player_uuid char(36) NOT NULL,"
 			+ " permission text,"
 			+ " duration bigint,"
-			+ " permission_value boolean);");
+			+ " permission_value boolean,"
+			+ " contextset text);"),
+	PLAYER_TEMP_GROUP("lttpPlayerTemporaryGroup", new PlayerTemporaryPermission(), ServerType.ALL,
+			"CREATE TABLE IF NOT EXISTS `%%tablename%%"
+			+ "` (id int AUTO_INCREMENT PRIMARY KEY,"
+			+ " player_uuid char(36) NOT NULL,"
+			+ " permission text,"
+			+ " duration bigint,"
+			+ " permission_value boolean,"
+			+ " contextset text);");
 	
 	private SQLiteType(String tableName, Object object, ServerType usedOnServer, String setupQuery)
 	{

@@ -362,7 +362,7 @@ public class YamlManager
 				"Wenn 'true', wird dem Spieler beim joinen eine Sync Nachricht gesendet.",
 				"",
 				"If 'true', a sync message will be sent to the player when joining."});
-		addConfig("ExcludedPermissionPerGroup",
+		addConfig("Excluded.PermissionPerGroup",
 				new Object[] {
 				"vip;dummy.one",
 				"supporter;dummy.two"},
@@ -373,23 +373,32 @@ public class YamlManager
 				"Die Angegebene Gruppe ist als Variable für die primäre Gruppe des Spielers gemeint.",
 				"Bedeutet, wenn der Spieler diese Gruppe als primäre hat, so zählt diese nur.",
 				"Eine <default> ist für alle Spieler, egal in welcher Gruppe sich der Spieler befindet.",
-				"Bedenkt, dass nur Spielerbezogene temporäre Permission gespeichert werden können.",
-				"Temporäre Permission, welcher Gruppen vergeben werden, werden nicht geträckt, da sie für mehrere Spieler sind.",
 				"",
 				"This is where all permissions that should be excluded from tracking go.",
 				"These permissions will therefore be ignored when the player joins.",
 				"The specified group is meant as a variable for the player's primary group.",
 				"This means that if the player has this group as their primary, then only this one counts.",
-				"A <default> is for all players, regardless of which group the player is in.",
-				"Please note that only player-related temporary permissions can be saved.",
-				"Temporary permissions granted to groups are not tracked because they are for multiple players."});
+				"A <default> is for all players, regardless of which group the player is in."});
+		addConfig("Excluded.GroupInheritance",
+				new Object[] {
+				"vip",
+				"supporter"},
+				new Object[] {
+				"",
+				"Hier kommen alle Gruppen hinein, welche von dem Tracking exkludiert werden soll.",
+				"Diese Gruppen werden somit beim Joinen des Spielers ignoriert.",
+				"Es werden nur temporäre Gruppen geträckt, gemeint sind 'group.xxx' Permission die die Gruppenzugehörigkeit darstellen.",
+				"",
+				"This is where all groups that should be excluded from tracking go.",
+				"These groups will therefore be ignored when the player joins.",
+				"Only temporary groups are tracked, meaning 'group.xxx' permissions that represent group membership."});
 	}
 	
 	public void initLanguage() //INFO:Languages
 	{		
 		languageKeys.put("SyncMessage", 
 				new Language(new ISO639_2B[] {ISO639_2B.GER, ISO639_2B.ENG}, new Object[] {
-						"<gray>[<red>LTTP<gray>] <white>%amount% Permission Synchronisiert!",
-						"<gray>[<red>LTTP<gray>] <white>%amount% Permission syncronizied!"}));
+						"<gray>[<red>LTTP<gray>] <white>%perm% Permission(s) und %group% Gruppe(n) synchronisiert!",
+						"<gray>[<red>LTTP<gray>] <white>%perm% Permission(s) and %group% group(s) syncronizied!"}));
 	}
 }

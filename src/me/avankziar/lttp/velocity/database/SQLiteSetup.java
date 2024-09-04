@@ -8,7 +8,7 @@ public class SQLiteSetup extends SQLiteBaseSetup
 {
 	public SQLiteSetup(LTTP plugin)
 	{
-		super(plugin.getLogger());
+		super(plugin.getLogger(), plugin.getDataDirectory().toFile());
 		loadMysqlSetup(ServerType.VELOCITY);
 	}
 }

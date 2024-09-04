@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.UUID;
 import java.util.logging.Level;
 
@@ -19,19 +20,21 @@ public class PlayerTemporaryPermission implements SQLiteHandable
 	private String permission;
 	private long duration;
 	private boolean value;
+	private String context;
 	
 	public PlayerTemporaryPermission()
 	{
 		//empty
 	}
 	
-	public PlayerTemporaryPermission(int id, UUID uuid, String permission, long duration, boolean value)
+	public PlayerTemporaryPermission(int id, UUID uuid, String permission, long duration, boolean value, String... context)
 	{
 		setId(id);
 		setUuid(uuid);
 		setPermission(permission);
 		setDuration(duration);
 		setValue(value);
+		setContext(String.join(";", context));
 	}
 	
 	public int getId() 
@@ -39,9 +42,9 @@ public class PlayerTemporaryPermission implements SQLiteHandable
 		return id;
 	}
 
-	public void setId(int id) {
-		this.id = id;
-		
+	public void setId(int id) 
+	{
+		this.id = id;		
 	}
 
 	public UUID getUuid() 
@@ -84,19 +87,50 @@ public class PlayerTemporaryPermission implements SQLiteHandable
 		this.value = value;
 	}
 
+	public String getContext()
+	{
+		return context;
+	}
+	
+	public LinkedHashMap<String, String> getContextMap()
+	{
+		if(context == null)
+		{
+			return null;
+		}
+		String[] a = context.split(";");
+		LinkedHashMap<String, String> map = new LinkedHashMap<>();
+		for(String split : a)
+		{
+			String[] s = split.split("=");
+			if(s.length != 2)
+			{
+				continue;
+			}
+			map.put(s[0], s[1]);
+		}
+		return map;
+	}
+
+	public void setContext(String context)
+	{
+		this.context = context;
+	}
+
 	@Override
 	public boolean create(Connection conn, String tablename)
 	{
 		try
 		{
 			String sql = "INSERT INTO `" + tablename
-					+ "`(`player_uuid`, `permission`, `duration`, `permission_value`) " 
-					+ "VALUES(?, ?, ?, ?)";
+					+ "`(`player_uuid`, `permission`, `duration`, `permission_value`, `contextset`) " 
+					+ "VALUES(?, ?, ?, ?, ?)";
 			PreparedStatement ps = conn.prepareStatement(sql);
 			ps.setString(1, getUuid().toString());
 	        ps.setString(2, getPermission());
 	        ps.setLong(3, getDuration());
 	        ps.setBoolean(4, isValue());
+	        ps.setString(5, getContext());
 	        
 	        int i = ps.executeUpdate();
 	        SQLiteBaseHandler.addRows(QueryType.INSERT, i);
@@ -114,15 +148,16 @@ public class PlayerTemporaryPermission implements SQLiteHandable
 		try
 		{
 			String sql = "UPDATE `" + tablename
-					+ "` SET `player_uuid` = ?, `permission` = ?, `duration` = ?, `permission_value` = ?"
+					+ "` SET `player_uuid` = ?, `permission` = ?, `duration` = ?, `permission_value` = ?, `contextset` = ?"
 					+ " WHERE "+whereColumn;
 			PreparedStatement ps = conn.prepareStatement(sql);
 			ps.setString(1, getUuid().toString());
 	        ps.setString(2, getPermission());
 	        ps.setLong(3, getDuration());
 	        ps.setBoolean(4, isValue());
+	        ps.setString(5, getContext());
 	        
-	        int i = 5;
+	        int i = 6;
 			for(Object o : whereObject)
 			{
 				ps.setObject(i, o);
@@ -163,7 +198,8 @@ public class PlayerTemporaryPermission implements SQLiteHandable
 	        			UUID.fromString(rs.getString("player_uuid")),
 	        			rs.getString("permission"),
 	        			rs.getLong("duration"),
-	        			rs.getBoolean("permission_value")));
+	        			rs.getBoolean("permission_value"),
+	        			rs.getString("contextset")));
 			}
 			return al;
 		} catch (SQLException e)
