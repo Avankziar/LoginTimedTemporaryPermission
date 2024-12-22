@@ -3,7 +3,7 @@
 "version":"${version}",
 "description":"Store temporary permission when the player is offline.",
 "authors":["Avankziar"],
-"url":"https://example.com",
+"url":"https://www.spigotmc.org/resources/login-timed-temporary-permission.119421/",
 "dependencies":[{id='interfacehub', version='null', optional=false}, 
 				{id='luckperms', version='null', optional=false}],
 "main":"me.avankziar.lttp.velocity.LTTP"}

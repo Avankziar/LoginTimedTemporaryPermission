@@ -31,7 +31,7 @@ import me.avankziar.lttp.velocity.metric.Metrics;
 	id = "logintimedtemporarypermission",
 	name = "LoginTimedTemporaryPermission",
 	version = "1-0-0",
-	url = "https://example.org",
+	url = "https://www.spigotmc.org/resources/login-timed-temporary-permission.119421/",
 	dependencies = {
 			@Dependency(id = "interfacehub"),
 			@Dependency(id = "luckperms", optional = true)
